@@ -6,7 +6,7 @@
     "image": "",
     "email": "alexis.brissard@polymtl.ca",
     "phone": "",
-    "url": "",
+    "url": "https://abrissard.github.io.",
     "summary": "",
     "location": {
       "countryCode": "FR",
@@ -24,16 +24,16 @@
     {
       "name": "LAMA-WeST & LabCys",
       "position": "Masters Student Researcher",
-      "startDate": "2024-01-31",
-      "endDate": "",
+      "startDate": "2024-01",
+      "endDate": "2025-08",
       "highlights": [],
       "summary": "NLP & Cybersecurity. Supervised by Pr. Amal Zouaq & Pr. Frédéric Cuppens.",
-      "url": "",
+      "url": "https://polymtl.ca",
       "location": "Montreal, Quebec, Canada"
     },
     {
       "name": "Lyvoc",
-      "position": "Technical Consultant",
+      "position": "Technical Cybersecurity Consultant",
       "startDate": "2022-09-30",
       "endDate": "2023-03-31",
       "highlights": [],
