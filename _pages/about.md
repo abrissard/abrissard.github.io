@@ -21,7 +21,8 @@ social: true # includes social icons at the bottom of the page
 
 ### About me
 
-I am a french engineering student pursuing a double degree at Polytechnique Montréal, where I am conducting a research master's degree in natural language processing applied to cybersecurity. 
+I am a french engineering student pursuing a double degree at Polytechnique Montréal, where I am conducting a research master's degree in natural language processing applied to cybersecurity.
+
 I wish to leverage the technical skills and cutting-edge knowledge developed during my master's to continue working in the field of AI, ideally in a Research and Development team.
 
 <!-- Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
