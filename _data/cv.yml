@@ -3,8 +3,6 @@
   contents:
     - name: Full Name
       value: Alexis Brissard
-    - name: Date of Birth
-      value: 14th April 2001
     - name: Languages
       value: French (mother tongue), English (fluent), German (beginner)
 
@@ -103,10 +101,26 @@
   type: map
   contents:
     - name: ""
-      value: "Climbing: bouldering, top rope, lead ; indoor & outdoor"
+      value: "Climbing: Bouldering, top rope, lead ; indoor & outdoor"
     - name:
       value: "Handball: Goalkeeper at university level and 4 years in a club"
     - name:
       value: "Chess: 2 participations in the finals of the French school championships"
     - name:
       value: "Hitchhiking: In Europe and North America"
+      
+- title: Other Interests
+  type: nested_list
+  contents:
+    - title: Climbing 🧗
+      items:
+        - Bouldering, top rope, lead ; indoor & outdoor
+    - title: Handball 🤾
+      items:
+        - Goalkeeper at university level and 4 years in a club
+    - title: Chess ♟
+      items:
+        - 2 participations in the finals of the French school championships
+    - title: Hitchhiking 👍
+      items:
+        - In Europe and North America
