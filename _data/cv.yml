@@ -95,32 +95,19 @@
       items:
         - From process descriptions
         - From emails
-    - title: Insider Threat
+    - title: Cybersecurity
+      items:
+        - Insider threats
+        - Anomaly detection
 
 - title: Other Interests
   type: map
   contents:
     - name: ""
-      value: "Climbing: Bouldering, top rope, lead ; indoor & outdoor"
+      value: "Climbing 🧗 Bouldering, top rope, lead ; indoor & outdoor"
     - name:
-      value: "Handball: Goalkeeper at university level and 4 years in a club"
+      value: "Handball 🤾 Goalkeeper at university level and 4 years in a club"
     - name:
-      value: "Chess: 2 participations in the finals of the French school championships"
+      value: "Chess ♟ 2 participations in the finals of the French school championships"
     - name:
-      value: "Hitchhiking: In Europe and North America"
-      
-- title: Other Interests
-  type: nested_list
-  contents:
-    - title: Climbing 🧗
-      items:
-        - Bouldering, top rope, lead ; indoor & outdoor
-    - title: Handball 🤾
-      items:
-        - Goalkeeper at university level and 4 years in a club
-    - title: Chess ♟
-      items:
-        - 2 participations in the finals of the French school championships
-    - title: Hitchhiking 👍
-      items:
-        - In Europe and North America
+      value: "Hitchhiking 👍 In Europe and North America"

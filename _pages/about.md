@@ -21,7 +21,7 @@ social: true # includes social icons at the bottom of the page
 
 ### About me
 
-I am a french engineering student pursuing a double degree at Polytechnique Montréal, where I am conducting a research master's degree in natural language processing applied to cybersecurity.
+👋 I am a french engineering student pursuing a double degree at Polytechnique Montréal, where I am conducting a research master's degree in natural language processing applied to cybersecurity.
 
 I wish to leverage the technical skills and cutting-edge knowledge developed during my master's to continue working in the field of AI, ideally in a Research and Development team.
 
