@@ -6,24 +6,24 @@
     - name: Date of Birth
       value: 14th April 2001
     - name: Languages
-      value: French, English
+      value: French (mother tongue), English (fluent), German (beginner)
 
 - title: Education
   type: time_table
   contents:
-    - title: MSc.
+    - title: MSc. NLP & Cybersecurity
       institution: Polytechnique Montréal, Canada
-      year: 2023
+      year: 2023 - Now
       description:
         - Description 1.
         - Description 2.
-        - title: Description 3.
+        - title: Process Knowledge Extraction from Natural Language Documents using LLMs
           contents:
             - Sub-description 1.
             - Sub-description 2.
-    - title: MSc.
+    - title: MSc. Computer Science
       institution: Institut National des Sciences Appliquées de Lyon, France
-      year: 2018
+      year: 2018 - 2023
       description:
         - Description 1.
         - Description 2.
