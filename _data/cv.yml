@@ -14,19 +14,10 @@
     - title: MSc. NLP & Cybersecurity
       institution: Polytechnique Montréal, Canada
       year: 2023 - Now
-      description:
-        - Description 1.
-        - Description 2.
-        - title: Process Knowledge Extraction from Natural Language Documents using LLMs
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
+
     - title: MSc. Computer Science
       institution: Institut National des Sciences Appliquées de Lyon, France
       year: 2018 - 2023
-      description:
-        - Description 1.
-        - Description 2.
 
 - title: Experience
   type: time_table
@@ -35,34 +26,53 @@
       institution: LAMA-WeST & LabCys, Montréal, Canada.
       year: 2024 - Now
       description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
+        - Information extraction from natural language documents using open-source LLMs
+        - Development and testing of advanced prompting techniques (e.g., Prompt Chaining, Self-Ask, Tree of Thoughts, Graph of Thoughts)
+        - Modeling of business processes for the detection of insider threats within companies
+
     - title: Technical Cybersecurity Consultant
       institution: Lyvoc, Lyon, France.
       year: 2022 - 2023
       description:
-        - Description 1.
-        - Description 2.
+        - Integration of Okta identity management software for 3 clients (5000 to 10000 employee identities)
+        - Development of 2 SCIM web servers (Tomcat + Java) and a custom OIDC web app (Vaadin + NodeJS)
+        - Design of a complete architecture for the validation of contractual documents (SharePoint + Vaadin)
+        - Technical monitoring and presentation of new technologies to the technical team (20+ employees)
 
     - title: Web Design and Development Engineer
       institution: Dassault Systems, Paris, France.
       year: 2022
+      description:
+        - Design and development of a web app for visualizing temporal data (d3.js, pixi.js, mapbox)
+        - Modeling and creation of a React web app for publishing data to Dassault Systems software
+        - Development of a custom tool for online image scraping (Python + Selenium)
 
     - title: Volunteer Electricity, Water and Premises Manager
       institution: 24 Heures de l'INSA Festival, Lyon, France
       year: 2019 - 2023
       description:
+        - Management of electricity and water supply during the entire festival (40000 visitors over 3 days)
+        - Contact and coordination of 10+ service providers and top-level school administration
+        - Management of a team of 10 volunteers for 10 days
 
-- title: Open Source Projects
-  type: time_table
+- title: Competencies
+  type: nested_list
   contents:
-    - title: <a href="https://github.com/alshedivat/al-folio">al-folio</a>
-      year: 2015-now
-      description: A beautiful, simple, clean, and responsive Jekyll theme for academics.
+    - title: Machine Learning
+      items:
+        - Training and inference of large language models on clusters and via API (embedding, classification, and generation)
+        - Design and development of a RAG application to facilitate access to corporate legal documents
+        - Inference optimization (e.g., batching, hardware optimization, caching)
+    - title: Cybersecurity
+      items:
+        - Creation of a notification service based on security log analysis
+        - Deep technical and functional knowledge of Identity & Access Management software (Okta, Azure AD, Auth0)
+        - Implementation of advanced authentication protocols use cases (SCIM, OAuth2, OIDC)
+    - title: Web Development
+      items:
+        - Conception, development and deployment of 6 custom webapps with different tech stacks
+        - Conception and specification of advanced cloud architecture
+        - Development of a cooking mobile app (Flutter + Django)
 
 - title: Certifications
   type: time_table
@@ -75,14 +85,19 @@
 - title: Academic Interests
   type: nested_list
   contents:
-    - title: Topic 1.
+    - title: Natural Language Processing
       items:
-        - Description 1.
-        - Description 2.
-    - title: Topic 2.
+        - Information Extraction
+        - Knowledge Base construction 
+    - title: LLMs
       items:
-        - Description 1.
-        - Description 2.
+        - Prompt Engineering
+        - Domain Adaptation
+    - title: Process Mining
+      items:
+        - From process descriptions
+        - From emails
+    - title: Insider Threat
 
 - title: Other Interests
 type: map
