@@ -100,7 +100,7 @@
     - title: Insider Threat
 
 - title: Other Interests
-type: map
+  type: map
   contents:
     - name: ""
       value: "Climbing: bouldering, top rope, lead ; indoor & outdoor"
@@ -108,3 +108,5 @@ type: map
       value: "Handball: Goalkeeper at university level and 4 years in a club"
     - name:
       value: "Chess: 2 participations in the finals of the French school championships"
+    - name:
+      value: "Hitchhiking: In Europe and North America"
