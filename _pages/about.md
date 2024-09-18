@@ -9,7 +9,7 @@ profile:
   image: prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p>Laboratoire LAMA-WeST</p>
+    <p>Laboratoires LAMA-WeST & LabCys</p>
     <p>2500 Chemin de Polytechnique</p>
     <p>Montréal, QC H3T 1J4</p>
 
@@ -18,14 +18,11 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-
 ### About me
 
 👋 I am a french engineering student pursuing a double degree at Polytechnique Montréal, where I am conducting a research master's degree in natural language processing applied to cybersecurity.
 
 I wish to leverage the technical skills and cutting-edge knowledge developed during my master's to continue working in the field of AI, ideally in a Research and Development team.
-
----
 
 <!-- Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
 
