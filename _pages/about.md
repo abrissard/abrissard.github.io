@@ -9,7 +9,7 @@ profile:
   image: prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p>Laboratoires LAMA-WeST & LabCys</p>
+    <p>LAMA-WeST & LabCys Labs</p>
     <p>2500 Chemin de Polytechnique</p>
     <p>Montréal, QC H3T 1J4</p>
 
