@@ -1,0 +1,20 @@
+# https://fontawesome.com/
+# https://jpswalsh.github.io/academicons/
+- name: Google Scholar
+  link: https://scholar.google.com/citations?user=q3_XEd4AAAAJ&hl=en
+  icon:
+    source: ai
+    name: ai-google-scholar
+    type: ai
+- name: GitHub
+  link: https://github.com/abrissard
+  icon:
+    source: fa
+    name: fa-github
+    type: fab
+- name: Email
+  link: mailto:alexis.brissard@mila.quebec
+  icon:
+    source: fa
+    name: fa-at
+    type: fas

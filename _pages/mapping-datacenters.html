@@ -1,0 +1,624 @@
+---
+layout: null
+permalink: /mapping-datacenters/
+title: "Mapping Data Centers: A Fragmented Undertaking"
+description: "An overview of data center mapping initiatives worldwide, with an interactive map."
+render_with_liquid: false
+sitemap: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapping Data Centers: A Fragmented Undertaking</title>
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+  @font-face{
+    font-family:"BBB Karrik";
+    src:url("/assets/fonts/bbb-karrik/BBB_Karrik.woff2") format("woff2");
+    font-weight:400 700; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:"BBB Baskervvol";
+    src:url("/assets/fonts/baskervvol/BBBBaskervvol-Regular.woff2") format("woff2");
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:"BBB Baskervvol";
+    src:url("/assets/fonts/baskervvol/BBBBaskervvol-Bold.woff2") format("woff2");
+    font-weight:700; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:"BBB Baskervvol";
+    src:url("/assets/fonts/baskervvol/BBBBaskervvol-Italic.woff2") format("woff2");
+    font-weight:400; font-style:italic; font-display:swap;
+  }
+  @font-face{
+    font-family:"Tremplin";
+    src:url("/assets/fonts/tremplin/Tremplin-Regular.woff2") format("woff2");
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:"Tremplin";
+    src:url("/assets/fonts/tremplin/Tremplin-Bold.woff2") format("woff2");
+    font-weight:700; font-style:normal; font-display:swap;
+  }
+  :root{
+    --citoy:#1D9E75; --citoy-d:#0F6E56;
+    --rech:#7F77DD; --rech-d:#534AB7;
+    --prive:#D85A30; --prive-d:#993C1D;
+    --public:#378ADD; --public-d:#185FA5;
+    --media:#D4537E; --media-d:#993556;
+    --commu:#BA7517; --commu-d:#854F0B;
+    --dc:#2C2C2A;
+    --ink:#2C2C2A; --ink-2:#5F5E5A; --paper:#FBFAF7; --line:#E4E1D8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{font-family:Georgia,'Times New Roman',serif; color:var(--ink); background:var(--paper);}
+  .layout{display:grid; grid-template-columns:minmax(0,11fr) minmax(0,9fr); height:100vh;}
+  body.text-max .layout{grid-template-columns:1fr 0;}
+  body.map-max .layout{grid-template-columns:0 1fr;}
+  .panel{position:relative; min-width:0; overflow:hidden;}
+  #text-panel{overflow-y:auto; border-right:1px solid var(--line); background:var(--paper);}
+  .panel-btn{
+    position:absolute; top:10px; right:14px; z-index:20;
+    display:flex; align-items:center; justify-content:center;
+    width:32px; height:32px; cursor:pointer;
+    background:#fff; border:1px solid var(--line); border-radius:6px; color:var(--ink-2);
+  }
+  .panel-btn:hover{border-color:#c9c5b8; color:var(--ink);}
+  .panel-btn .ic-collapse{display:none;}
+  body.text-max #btn-text .ic-expand{display:none;}
+  body.text-max #btn-text .ic-collapse{display:block;}
+  body.map-max #btn-map .ic-expand{display:none;}
+  body.map-max #btn-map .ic-collapse{display:block;}
+  #btn-text{position:fixed; top:14px; z-index:30; right:auto;}
+  article{padding:38px 60px 90px 96px; font-size:16.5px; line-height:1.78; font-family:"BBB Baskervvol",Georgia,'Times New Roman',serif;}
+  .art-head{border-bottom:1px solid var(--line); margin-bottom:2em; padding-bottom:1.6em;}
+  .art-head h1{font-family:"BBB Karrik","BBB Baskervvol",Georgia,serif; font-size:30px; line-height:1.25; font-weight:600; margin-bottom:.7em;}
+  .art-head .byline{font-family:"Tremplin",system-ui,sans-serif; font-size:13.5px; color:var(--ink-2);}
+  .art-head .byline b{color:var(--ink); font-weight:600;}
+  .art-head .fonts-note{display:block; margin-top:.3em; font-size:12px;}
+  .art-head .fonts-note a{color:inherit;}
+  .art-head .byline a{text-decoration:none;}
+  .art-head .byline .pub-date{display:block; margin-top:.3em;}
+  article h2{font-family:"BBB Karrik","BBB Baskervvol",Georgia,serif; font-size:21px; margin:2.2em 0 .7em; line-height:1.3; font-weight:600;}
+  article p{margin:0 0 1.05em; text-align:justify;}
+  a{color:var(--public-d);}
+  a.ml{
+    color:inherit; text-decoration:none; border-bottom:1.5px solid; cursor:pointer;
+    padding-bottom:1px;
+  }
+  a.ml::after{content:"\00a0›"; font-family:system-ui,sans-serif; font-size:.85em;}
+  a.ml.t-citoy{border-color:var(--citoy); color:var(--citoy-d);}
+  a.ml.t-rech{border-color:var(--rech); color:var(--rech-d);}
+  a.ml.t-prive{border-color:var(--prive); color:var(--prive-d);}
+  a.ml.t-public{border-color:var(--public); color:var(--public-d);}
+  a.ml.t-media{border-color:var(--media); color:var(--media-d);}
+  a.ml.t-commu{border-color:var(--commu); color:var(--commu-d);}
+  a.ml.t-dc{border-color:var(--dc); color:var(--dc); font-weight:600;}
+  .refs{font-size:14.5px; border-top:1px solid var(--line); margin-top:3em; padding-top:1.4em;}
+  .refs h2{font-size:19px;}
+  .refs h2:not(:first-of-type){margin-top:2em; padding-top:1.2em; border-top:1px solid var(--line);}
+  .refs h3{font-family:"BBB Karrik",system-ui,sans-serif; font-size:12px; text-transform:uppercase; letter-spacing:.8px; color:var(--ink-2); margin:1.6em 0 .6em; font-weight:600;}
+  .refs p{margin:0 0 .7em; padding-left:1.6em; text-indent:-1.6em; text-align:left; line-height:1.55; color:var(--ink-2);}
+  .refs p a{color:var(--public-d);}
+  #toc{
+    position:fixed; left:0; top:50%; transform:translateY(-50%); z-index:25;
+    font-family:system-ui,sans-serif; padding:10px 8px 10px 0;
+  }
+  body.map-max #toc{display:none;}
+  #toc .rail{display:flex; flex-direction:column; gap:9px; padding:10px 12px; cursor:pointer;}
+  #toc .rail span{display:block; width:16px; height:2.5px; background:#C9C5B8; border-radius:2px; transition:background .15s;}
+  #toc .rail span.on{background:var(--ink-2); width:20px;}
+  #toc .list{
+    display:none; background:#fff; border:1px solid var(--line); border-radius:0 10px 10px 0;
+    padding:12px 6px 12px 4px; box-shadow:2px 3px 14px rgba(0,0,0,.08); max-width:280px;
+  }
+  #toc:hover .rail{display:none;}
+  #toc:hover .list{display:block;}
+  #toc .list a{
+    display:block; font-size:13px; color:var(--ink-2); text-decoration:none;
+    padding:5px 14px; border-left:2.5px solid transparent; line-height:1.35;
+  }
+  #toc .list a:hover{color:var(--ink); background:var(--paper);}
+  #toc .list a.on{color:var(--ink); border-left-color:var(--ink-2); font-weight:600;}
+  #map-panel{background:#EFEDE8;}
+  #map{position:absolute; inset:0;}
+  #legend{
+    position:absolute; left:12px; bottom:26px; z-index:10;
+    font-family:"Tremplin",system-ui,sans-serif;
+    background:rgba(255,255,255,.95); border:1px solid var(--line); border-radius:10px;
+    color:var(--ink); width:fit-content;
+  }
+  #legend .lg-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 14px; cursor:pointer;
+  }
+  #legend .lg-head .lg-title{font-size:13.5px; font-weight:600; letter-spacing:.2px;}
+  #legend .lg-head button{
+    border:none; background:none; cursor:pointer; color:var(--ink-2);
+    font-size:15px; line-height:1; padding:2px 4px;
+  }
+  #legend .lg-body{padding:2px 14px 12px; border-top:1px solid var(--line);}
+  #legend .lg-sec{font-size:11px; text-transform:uppercase; letter-spacing:.7px; color:var(--ink-2); margin:10px 0 6px; font-weight:600;}
+  #legend .lg-row{display:flex; align-items:center; gap:9px; font-size:13px; margin:5px 0;}
+  #legend .sw{width:12px; height:12px; border-radius:50%; border:1.5px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.15); flex:none;}
+  #legend .dm{width:10px; height:10px; transform:rotate(45deg); background:var(--dc); flex:none; margin:0 1px;}
+  #legend .dash{width:22px; border-top:2px dashed var(--ink-2); flex:none;}
+  #legend.collapsed .lg-body{display:none;}
+  .maplibregl-popup{font-family:"Tremplin",system-ui,sans-serif; max-width:300px !important;}
+  .maplibregl-popup-content{border-radius:10px; padding:14px 16px; box-shadow:0 4px 18px rgba(0,0,0,.18);}
+  .maplibregl-popup-close-button{
+    font-size:18px; width:26px; height:26px; top:8px; right:8px;
+    border-radius:6px; color:#5F5E5A; line-height:1;
+  }
+  .maplibregl-popup-close-button:hover{background:#F1EFE8; color:#2C2C2A;}
+  .pp h3{font-size:14.5px; margin:0 0 6px; line-height:1.35; padding-right:20px;}
+  .pp-top{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:7px;}
+  .pp .badge{display:inline-block; font-size:10.5px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; border-radius:20px; padding:2px 9px; color:#fff;}
+  .pp .meta{font-size:12px; color:#5F5E5A; margin:0 0 7px;}
+  .pp .ctx{font-size:12.5px; line-height:1.55; margin:0 0 8px; color:#2C2C2A;}
+  .pp-foot{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .pp a{font-size:12.5px;}
+  .pp-secs{flex:none; display:flex; gap:5px;}
+  .pp-sec{
+    flex:none; display:inline-flex; align-items:center; justify-content:center;
+    min-width:20px; height:20px; padding:0 6px; font-size:11px; font-weight:600;
+    color:var(--ink-2); background:#F1EFE8; border:1px solid var(--line); border-radius:20px; cursor:pointer;
+  }
+  .pp-sec:hover{background:#E4E1D8; color:var(--ink);}
+  .pp-nav{flex:none; display:flex; gap:6px;}
+  .pp-nav-btn{
+    flex:none; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center;
+    font-size:14px; line-height:1; color:var(--ink-2); background:#F1EFE8; border:1px solid var(--line);
+    border-radius:50%; cursor:pointer;
+  }
+  .pp-nav-btn:hover{background:#E4E1D8; color:var(--ink);}
+  a.ml.flash{animation:ml-flash 1.6s ease;}
+  @keyframes ml-flash{0%{background:#FCE79A;} 100%{background:transparent;}}
+  @media (max-width:900px){
+    .layout{display:block; height:auto;}
+    #text-panel{border-right:none; height:auto; overflow:visible;}
+    #map-panel{position:sticky; top:0; height:55vh;}
+    .panel-btn, #toc{display:none;}
+    article{padding:30px 22px 60px;}
+  }
+</style>
+</head>
+<body>
+<nav id="toc" aria-label="Table of contents">
+  <div class="rail" id="toc-rail"></div>
+  <div class="list" id="toc-list"></div>
+</nav>
+<div class="layout">
+  <section class="panel" id="text-panel">
+    <button class="panel-btn" id="btn-text" title="Expand text panel" aria-label="Expand text panel">
+      <svg class="ic-expand" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      <svg class="ic-collapse" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+    </button>
+    <article>
+      <div class="art-head">
+        <h1>Mapping Data Centers: A Fragmented Undertaking</h1>
+        <p class="byline"><b><a href="https://abrissard.github.io/" target="_blank" rel="noopener">Alexis Brissard</a></b>, collaborating researcher at <a href="https://mila.quebec/" target="_blank" rel="noopener">Mila – Quebec AI Institute</a><span class="pub-date">Published August 6, 2026 · <a href="/cartographier-les-centres-de-donnees/">Version française</a></span><span class="fonts-note">Non-binary typefaces: <a href="https://typotheque.genderfluid.space/fr/fontes/bbb-karrik" target="_blank" rel="noopener">Karrik</a> (<a href="https://openfontlicense.org/open-font-license-official-text/" target="_blank" rel="noopener">OFL license</a>), <a href="https://typotheque.genderfluid.space/fr/fontes/baskervvol" target="_blank" rel="noopener">Baskervvol</a> and <a href="https://typotheque.genderfluid.space/fr/fontes/tremplin" target="_blank" rel="noopener">Tremplin</a> (<a href="https://typotheque.genderfluid.space/fr/licences#cute" target="_blank" rel="noopener">CUTE license</a>).</span></p>
+      </div>
+
+      <h2 id="s1">1. The Cloud's Roots</h2>
+      <p>Digital infrastructure is often described through the metaphor of the "cloud," which suggests an immaterial reality with no fixed location. This image conceals a substantial physical footprint: online services, data storage, and, increasingly, the training and operation of artificial intelligence models all rely on data centers: industrial buildings filled with servers, connected to electrical grids and telecommunications networks. Their consumption of electricity, water, and land is considerable, and its effects are felt well beyond the sites themselves.</p>
+      <p>The recent rise of generative artificial intelligence has changed the scale of these facilities. In Memphis, Tennessee, the company xAI brought online <a class="ml t-dc" data-id="colossus">Colossus</a>, a site that by early 2026 housed more than half a million graphics processors. Its power supply, provided in part by gas turbines installed before all required permits had been obtained, has drawn local opposition. In Texas, the <a class="ml t-dc" data-id="stargate">Stargate campus in Abilene</a>, backed by OpenAI, Oracle, and Crusoe, targets a capacity of 1.2 gigawatts, comparable to that of a nuclear reactor. In Virginia, Loudoun County, around <a class="ml t-dc" data-id="ashburn">Ashburn</a>, has the highest concentration of data centers in the world.</p>
+      <p>These infrastructures transform the territories that host them: land use, grid connections, water consumption, tax revenue, noise pollution. They attract growing interest from public authorities, researchers, and nearby residents. Yet one observation stands out to anyone looking into the question: no state or international organization maintains an exhaustive public registry of these facilities, their location, their capacity, or their resource consumption.</p>
+      <p>Faced with this gap, a diverse range of actors has set out to map data centers: specialized companies, public laboratories, regulators, research teams, associations, citizen collectives, and communities of volunteer contributors. This article offers an overview of these mapping efforts. The interactive map accompanying the text locates the initiatives surveyed as well as a few representative data centers; the colored links in the text point directly to it, each color corresponding to a type of initiative.</p>
+
+      <h2 id="s2">2. The Obstacles to Mapping</h2>
+      <p>The first obstacle lies in the very definition of what constitutes a data center. The category covers heterogeneous realities, from a technical closet of a few dozen square meters housing a telecom operator's equipment to campuses of several hundred hectares dedicated to training AI models. The <a href="https://www.entreprises.gouv.fr/la-dge/actualites/la-dge-publie-un-guide-pour-accompagner-limplantation-de-centres-de-donnees-en" target="_blank" rel="noopener">guide for supporting data center implementation</a>, published in November 2025 by France's Ministry of the Economy, distinguishes five families. Enterprise centers, small and often urban, are operated directly by their owners (banks, telecom operators, government agencies). Colocation and hosting centers let an operator lease shared infrastructure (power, cooling, security) to clients without owning their servers. Cloud service provider centers are run by the American hyperscalers (Amazon, Microsoft, Google) as well as by a handful of French and European players. "Edge" centers, decentralized and small, are located close to users to reduce latency. High-density centers, finally, are dedicated to high-performance computing and AI model training.</p>
+      <p>Across these categories, power capacity varies by a factor of more than a thousand. Depending on the threshold used (installed capacity, floor area, dedicated grid connection), the same region can be counted as having ten or a hundred data centers, which accounts for much of the discrepancy between different surveys. Public debate benefits from distinguishing these categories: the issues raised by a 500-kilowatt neighborhood site have little in common with those of a gigawatt hyperscale campus. This heterogeneity is not offset by any dedicated regulatory framework: the data center is not a legal category in its own right. Depending on the country and the project, it may be classified as an industrial facility, a telecommunications infrastructure, or a simple commercial building. As a result, this body of work has no stable, shared scope.</p>
+      <p>The second obstacle is the sector's opacity. Operators often invoke, jointly, trade secrecy and security requirements to limit the publication of information about their facilities. Development projects are frequently carried out through purpose-created project companies operating under code names that conceal the end client's identity. Permit applications and impact studies, when public, are sometimes redacted of power or water consumption figures. Non-disclosure agreements between developers and municipalities further restrict what even local elected officials can disclose. Under these conditions, mapping amounts less to compiling available data than to conducting an investigation.</p>
+      <p>The final obstacle is the sector's pace of change, which quickly renders any snapshot obsolete. Work from York University (<a class="ml t-rech" data-id="york">Data Centred</a>) illustrates this for Canada: the capacity of announced or under-construction projects there represents nearly fourteen times that of the operating fleet. A map limited to operational facilities would therefore capture only a fraction of the phenomenon, even though it is precisely at the project stage that the public can weigh in on land-use decisions. Tracking the full life cycle of projects, from announcement to commissioning, including cancellations, becomes a methodological requirement in its own right.</p>
+
+      <h2 id="s3">3. Families of Actors</h2>
+      <p>In the face of these obstacles, the landscape of data center mapping has taken shape gradually, driven by the needs of actors with different purposes.</p>
+      <p><strong>Private actors</strong> led the way, for commercial purposes. The oldest reference still active, <a class="ml t-prive" data-id="dcmap">Data Center Map</a>, was launched in 2007 to make up for the lack of transparency in a market that was then hard to read, even for its own participants. Fed by operators' voluntary submissions, who see it as a channel for visibility, the site now lists several thousand facilities and has become the sector's main documentary reference. <a class="ml t-prive" data-id="baxtel">Baxtel</a> and <a class="ml t-prive" data-id="aterio">Aterio</a> occupy a comparable, more specialized niche: the former offers detailed technical profiles by site, the latter paid datasets aimed at investors and equipment makers. These datasets cover in particular the United States and Canada, including projects under construction. These products provide information on services and capacity, much less on environmental or local impacts.</p>
+      <p><strong>Public actors</strong> have entered the field more recently, following two distinct logics. The first is planning: in the United States, the National Renewable Energy Laboratory (<a class="ml t-public" data-id="nrel">NREL</a>), a federal Department of Energy laboratory, published a map in late 2025 listing more than 4,000 data centers that are operating, under construction, or planned. The map relates them to electricity transmission lines and major fiber-optic backbones, in order to anticipate where power demand will materialize. The second is regulation: in France, the electronic communications regulator (<a class="ml t-public" data-id="arcep">Arcep</a>) collects environmental data (electricity consumption, energy efficiency, water use) from operators every year as part of its "Pour un numérique soutenable" survey, which it publishes in aggregated form. This remains one of the few schemes worldwide in which a public authority legally compels operators to report environmental information, unlike methods that depend on their goodwill alone. On a smaller scale, the Institut Paris Region maintains an <a class="ml t-public" data-id="idf">Observatory of Data Centers in Île-de-France</a> that publicly and exhaustively documents the region's facilities, capacity, and projects, offering a rare example of complete institutional mapping confined to a specific territory.</p>
+      <p><strong>Researchers</strong> have long taken an interest in the environmental impact of digital technology, and the rise of artificial intelligence has now given new momentum to the question of data centers specifically. The <a class="ml t-rech" data-id="epoch">Epoch AI</a> institute, which specializes in the quantitative study of AI trends, launched a data hub in November 2025 on the world's largest AI data centers. Its method combines high-resolution satellite imagery, building permits, and public records, and the entire dataset is published in downloadable form. In Canada, a team at <a class="ml t-rech" data-id="york">York University</a> produced in 2026 the first overview of the national fleet by tracking each project from announcement to commissioning, thereby documenting the marked gap between announcements and actual builds.</p>
+      <p><strong>Advocacy and citizen actors</strong> form the most diverse family. In France, the collective <a class="ml t-citoy" data-id="nuage">Le nuage était sous nos pieds</a> ("The cloud was beneath our feet"), formed in Marseille in 2023 amid contested expansion of the city's <a class="ml t-dc" data-id="mrs">port-area campuses</a>, tracks existing facilities, announced projects, and the mobilizations opposing them. In the United States, the <a class="ml t-citoy" data-id="pec">Piedmont Environmental Council</a>, a long-established environmental organization in Virginia, created in 2023 a map of existing and proposed data centers in Loudoun County. The case of the <a class="ml t-citoy" data-id="ontario">Ontario Data Centre Tracker</a> deserves mention: this provincial tracker is the work of a single resident. Its methodology, informal and poorly documented, calls for caution regarding the published figures, but the very existence of the initiative testifies to a gap in public information that individuals are taking it upon themselves to fill. In Quebec, where no citizen mapping had existed until now, the NRS collective (Numérique Responsable et Soutenable) announced that a map from its research project <a class="ml t-citoy" data-id="nrs">À la recherche des centres de données québécois</a> ("In search of Quebec's data centers") would be published sometime in 2026. It would be the first initiative of its kind in the province.</p>
+      <p><strong>Open-source communities and the media</strong> round out the picture. In France, the company <a class="ml t-commu" data-id="hubblo">Hubblo</a> launched in 2026 an open inventory of the country's data centers, built from public sources structured according to a standardized contribution schema. On <a class="ml t-commu" data-id="osm">OpenStreetMap</a>, volunteer contributors document data centers one by one using the <a href="https://wiki.openstreetmap.org/wiki/Tag:telecom%3Ddata_center" target="_blank" rel="noopener"><code>telecom=data_center</code></a> tag. This open, imperfect but freely correctable data layer feeds other productions, such as <a class="ml t-media" data-id="next">the world map produced by the French outlet Next</a>. That map cross-references OpenStreetMap's data centers with indicators of water stress, grid carbon intensity, and historical satellite imagery. This journalistic work shows what open-data aggregation makes possible, while also raising the question of attribution: the value of the final map rests largely on upstream community work that deserves to be explicitly credited.</p>
+      <p>This overview reveals a landscape that is rich but fragmented: each map answers a particular question, and scopes, definitions, and licenses differ enough to make comparisons difficult. The next section examines the collection methods that give rise to these differences.</p>
+
+      <h2 id="s4">4. Mapping Methods</h2>
+      <p>Behind this diversity of actors, four main collection methods can be identified, which initiatives combine in varying proportions.</p>
+      <p><strong>Declarative collection</strong> consists of obtaining information directly from operators. It can be voluntary, as with <a class="ml t-prive" data-id="dcmap">Data Center Map</a>, where operators fill out their own listings, or mandatory, as in <a class="ml t-public" data-id="arcep">Arcep</a>'s annual survey. Reliable for what is declared, this method is by construction silent on what operators choose to withhold, and its coverage depends on the incentive, commercial or regulatory, to report.</p>
+      <p><strong>Open-source investigation</strong>, or OSINT (open source intelligence), reconstructs information from public documents: building permits, grid-connection requests, planning records, corporate registries, local press, job postings. This method, central to the work of the <a class="ml t-citoy" data-id="nuage">Le nuage était sous nos pieds</a> collective, demands considerable time and a detailed knowledge of local administrative procedures. It remains, however, the only method that can document projects before their official announcement, at the moment when the information holds the most value for public debate.</p>
+      <p><strong>Remote sensing</strong> exploits a physical characteristic of data centers: their cooling equipment, sized in proportion to installed computing power, is visible in aerial and satellite imagery. <a class="ml t-rech" data-id="epoch">Epoch AI</a>'s analysts have thus built models linking the diameter and number of a site's fans to its cooling capacity, and hence to its electrical load, with a precision they consider adequate for tracking large sites. Imagery also makes it possible to follow construction progress image by image, from earthworks to roofing, as at <a class="ml t-dc" data-id="colossus">Memphis</a> or <a class="ml t-dc" data-id="stargate">Abilene</a>. The method, however, is poorly suited to small urban facilities, which are often indistinguishable from ordinary buildings.</p>
+      <p><strong>Crowdsourcing</strong> aggregates thousands of individual contributions. On <a class="ml t-commu" data-id="osm">OpenStreetMap</a>, each contributor documents the facilities they know about; the sum of these contributions gradually builds a world map whose quality varies by region but which has two unique properties: it is freely reusable, and anyone can correct it. Errors there are public, discussed, and traceable, something no proprietary database can claim.</p>
+      <p>None of these methods suffices on its own. The most robust surveys combine them, as does the <a class="ml t-public" data-id="idf">Observatory of Data Centers in Île-de-France</a>, which maintains satellite tracking of previously declared centers. <a class="ml t-media" data-id="next">Next</a> does the same by cross-referencing <a class="ml t-commu" data-id="osm">OpenStreetMap</a> data with environmental indicators and historical imagery. These initiatives would benefit from greater interoperability, which is currently hindered by differing licenses and formats.</p>
+
+      <h2 id="s5">5. Mapping as Contestation</h2>
+      <p>The siting of data centers has triggered local opposition of a new magnitude, particularly in the United States. The <a href="https://datacenteropposition.com/" target="_blank" rel="noopener">Data Center Opposition Report</a>, which tracks organized online opposition groups, counted more than 500 local groups and 525,000 members as of June 2026, a sevenfold increase since December 2025. These groups are present in more than 40 states, forming at a rate of roughly two new groups per day. This opposition has itself become a mapping subject. The <a class="ml t-citoy" data-id="coalition">Coalition for Responsible Data Center Development</a> tracks the citizen organizations formed around siting projects, producing a map of the mobilization that lets local groups identify one another and share experiences across state lines. In a different register, <a class="ml t-prive" data-id="dcwatch10a">Data Center Watch</a>, a project of the company 10a Labs, tracks opposition on behalf of a professional audience: its reports counted around 75 projects blocked or delayed by local mobilization in the first quarter of 2026, representing some $130 billion in investment. The fact that tracking opposition has become a business-intelligence product speaks to the scale the phenomenon has reached.</p>
+      <p>The relationship between contestation and mapping is not, however, reducible to this relation between object and observer. Neighboring residents' groups are often the first indicators that a project is arriving in a territory: attentive to rezoning requests, filed permits, unusual land transactions, and weak local signals, they pick up on clues that frequently precede official announcements. Their reports feed directly into citizen maps, such as those of the <a class="ml t-citoy" data-id="pec">Piedmont Environmental Council</a> or the <a class="ml t-citoy" data-id="nuage">Le nuage était sous nos pieds</a> collective, which add projects as soon as they are detected.</p>
+      <p>The relationship also works in the other direction: mapping equips contestation, giving residents the means to situate a project within its local context and compare it to precedents, so as to raise precise questions during public consultations. The result is a mutual reinforcement: opponents produce part of the information the maps use, and the maps in turn strengthen their capacity to act. Local groups are therefore not an anomaly in the mapping landscape: they form a network of territorial observation, on which a good number of the initiatives described in this article depend.</p>
+      <p>This review points to a few lessons. A map is never neutral: one built by a broker, a regulator, or a residents' collective shows neither the same objects nor the same attributes, and transparency about definitions, sources, and licenses matters as much as the data itself. Sustainability is a second challenge: many citizen maps rest on a handful of volunteers, when they do not depend on a single person, and their long-term upkeep remains fragile in a fast-moving sector. Finally, linking up with existing open data, <a class="ml t-commu" data-id="osm">OpenStreetMap</a> foremost among them, both pools the collection effort and ensures results remain reusable.</p>
+      <p>Despite these caveats, a clear trend emerges. Data center mapping, long the domain of sector specialists, is gradually becoming a tool for territorial information and democratic participation. Knowing where these facilities are, who operates them, what they consume, and what is planned is a precondition for any informed public deliberation about their siting. The initiatives surveyed here, for all their limitations and blind spots, lay the first stones: what remains is to connect them and make them last.</p>
+
+      <div class="refs">
+        <h2 id="s6">References: mapped points</h2>
+        <h3>Data centers mentioned</h3>
+        <p>Wikipedia. (2026). <a href="https://en.wikipedia.org/wiki/Colossus_(data_center)" target="_blank" rel="noopener">Colossus (data center)</a>. Accessed August 6, 2026. <a class="ml t-dc" data-id="colossus">View on map</a></p>
+        <p>Crusoe AI. (2025). <a href="https://www.crusoe.ai/resources/blog/an-inside-look-at-the-abilene-ai-data-center" target="_blank" rel="noopener">An inside look at the Abilene AI data center</a>. Accessed August 6, 2026. <a class="ml t-dc" data-id="stargate">View on map</a></p>
+        <p>Digital Realty. (2026). <a href="https://www.digitalrealty.com/fr/data-centers/emea/marseille" target="_blank" rel="noopener">Data centers de Marseille</a>. Accessed August 6, 2026. <a class="ml t-dc" data-id="mrs">View on map</a></p>
+        <h3>Advocacy and citizen initiatives</h3>
+        <p>Le nuage était sous nos pieds. (2026). <a href="https://lenuageetaitsousnospieds.org/articles/2025-12-11-carte-des-data-centers-des-projets-et-des-contestations-en-france.html" target="_blank" rel="noopener">Carte des data centers, des projets et des contestations en France</a>. Accessed August 6, 2026. <a class="ml t-citoy" data-id="nuage">View on map</a></p>
+        <p>Piedmont Environmental Council. (2023). <a href="https://www.pecva.org/region/loudoun/existing-and-proposed-data-centers-a-web-map/" target="_blank" rel="noopener">Existing and proposed data centers : a web map</a>. Accessed August 6, 2026. <a class="ml t-citoy" data-id="pec">View on map</a></p>
+        <p>Ontario Data Centre Tracker. (2026). <a href="https://ontariodatacentres.ca/" target="_blank" rel="noopener">Ontario Data Centre Tracker</a>. Accessed August 6, 2026. <a class="ml t-citoy" data-id="ontario">View on map</a></p>
+        <p>Collectif NRS (Numérique Responsable et Soutenable). (2026). <a href="https://www.numerique-responsable.ca/initiative/a-la-recherche-des-centres-de-donnees-quebecois-projet-de-recherche/" target="_blank" rel="noopener">À la recherche des centres de données québécois : projet de recherche</a>. Accessed August 6, 2026. <a class="ml t-citoy" data-id="nrs">View on map</a></p>
+        <h3>Research initiatives</h3>
+        <p>Epoch AI. (2026). <a href="https://epoch.ai/data/data-centers" target="_blank" rel="noopener">Frontier Data Centers Hub</a>; <a href="https://epoch.ai/data/data-centers-documentation/methodology" target="_blank" rel="noopener">Methodology</a>. Accessed August 6, 2026. <a class="ml t-rech" data-id="epoch">View on map</a></p>
+        <p>Carlo, A. and Rolheiser, L. (2026). <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099" target="_blank" rel="noopener">Data Centred : the shifting landscape of Canada's digital infrastructure</a>. SSRN. Accessed August 6, 2026. <a class="ml t-rech" data-id="york">View on map</a></p>
+        <h3>Public initiatives</h3>
+        <p>National Renewable Energy Laboratory. (2025). <a href="https://research-hub.nrel.gov/en/publications/data-center-infrastructure-in-the-united-states-november-2025-2/" target="_blank" rel="noopener">Data center infrastructure in the United States, 2025 (map)</a>. Accessed August 6, 2026. <a class="ml t-public" data-id="nrel">View on map</a></p>
+        <p>Arcep. (2026). <a href="https://www.arcep.fr/cartes-et-donnees/nos-publications-chiffrees/impact-environnemental/derniers-chiffres.html#c41418" target="_blank" rel="noopener">Pour un numérique soutenable : derniers chiffres de l'impact environnemental</a>. Accessed August 6, 2026. <a class="ml t-public" data-id="arcep">View on map</a></p>
+        <p>Institut Paris Region. (2026). <a href="https://www.institutparisregion.fr/amenagement-et-territoires/observatoire-des-data-centers-en-ile-de-france/" target="_blank" rel="noopener">Observatoire des data centers en Île-de-France</a>. Accessed August 6, 2026. <a class="ml t-public" data-id="idf">View on map</a></p>
+        <h3>Private initiatives</h3>
+        <p>Data Center Map. (2026). <a href="https://www.datacentermap.com/" target="_blank" rel="noopener">Data Center Map : colocation, cloud and connectivity</a>; <a href="https://www.datacentermap.com/research/data/" target="_blank" rel="noopener">About our data</a>. Accessed August 6, 2026. <a class="ml t-prive" data-id="dcmap">View on map</a></p>
+        <p>Aterio. (2026). <a href="https://www.aterio.io/datasets/lst_ca_data_centers" target="_blank" rel="noopener">Data center datasets, United States and Canada</a>. Accessed August 6, 2026. <a class="ml t-prive" data-id="aterio">View on map</a></p>
+        <p>Baxtel. (2026). <a href="https://baxtel.com/map" target="_blank" rel="noopener">Global data center map</a>. Accessed August 6, 2026. <a class="ml t-prive" data-id="baxtel">View on map</a></p>
+        <h3>Mapping the opposition</h3>
+        <p>Coalition for Responsible Data Center Development. (2026). <a href="https://www.datacenterresponsibility.com/mapofcommunityorganizations" target="_blank" rel="noopener">Map of community organizations focusing on data centers</a>. Accessed August 6, 2026. <a class="ml t-citoy" data-id="coalition">View on map</a></p>
+        <p>Data Center Watch, 10a Labs. (2026). <a href="https://www.datacenterwatch.org/" target="_blank" rel="noopener">Data Center Watch : tracking local opposition to data centers</a>. Accessed August 6, 2026. <a class="ml t-prive" data-id="dcwatch10a">View on map</a></p>
+        <h3>Media and community initiatives</h3>
+        <p>Hubblo. (2026). <a href="https://datacenters.hubblo.org/" target="_blank" rel="noopener">DC Watch : The digital common for data centre footprints</a>; <a href="https://dcwatch.hubblo.org/references/licenses_credits_sources.html" target="_blank" rel="noopener">Licences, crédits et sources</a>. Accessed August 6, 2026. <a class="ml t-commu" data-id="hubblo">View on map</a></p>
+        <p>Next. (2026). <a href="https://next.ink/carte-mondiale-des-datacenters-et-des-ressources-associees" target="_blank" rel="noopener">Carte mondiale des datacenters et des ressources associées</a>. Accessed August 6, 2026. <a class="ml t-media" data-id="next">View on map</a></p>
+        <p>OpenStreetMap. (2026). <a href="https://taginfo.geofabrik.de/europe:france/tags/telecom=data_center#map" target="_blank" rel="noopener">Répartition de la balise telecom=data_center (Taginfo, Geofabrik)</a>; <a href="https://wiki.openstreetmap.org/wiki/Tag:telecom%3Ddata_center" target="_blank" rel="noopener">documentation de la balise (wiki OpenStreetMap)</a>. Accessed August 6, 2026. <a class="ml t-commu" data-id="osm">View on map</a></p>
+        <h2 id="s7">Other references</h2>
+        <p>Data Center Opposition Report. (2026). <a href="https://datacenteropposition.com/" target="_blank" rel="noopener">Data Center Opposition Report</a>, April 2026 report and June 2026 update. Accessed August 6, 2026.</p>
+        <p>Ministère de l'Économie (Direction générale des entreprises). (2025). <a href="https://www.entreprises.gouv.fr/la-dge/actualites/la-dge-publie-un-guide-pour-accompagner-limplantation-de-centres-de-donnees-en" target="_blank" rel="noopener">Guide d'accompagnement pour l'implantation des centres de données</a>. Accessed August 6, 2026.</p>
+      </div>
+    </article>
+  </section>
+  <section class="panel" id="map-panel">
+    <button class="panel-btn" id="btn-map" title="Expand map" aria-label="Expand map">
+      <svg class="ic-expand" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      <svg class="ic-collapse" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+    </button>
+    <div id="map"></div>
+    <div id="legend">
+      <div class="lg-head" id="lg-head">
+        <span class="lg-title">Legend</span>
+        <button id="lg-btn" aria-label="Collapse legend">−</button>
+      </div>
+      <div class="lg-body">
+        <div class="lg-sec">Initiative type</div>
+        <div class="lg-row"><span class="sw" style="background:var(--citoy)"></span>Citizen</div>
+        <div class="lg-row"><span class="sw" style="background:var(--commu)"></span>Community</div>
+        <div class="lg-row"><span class="sw" style="background:var(--media)"></span>Media</div>
+        <div class="lg-row"><span class="sw" style="background:var(--rech)"></span>Research</div>
+        <div class="lg-row"><span class="sw" style="background:var(--public)"></span>Public</div>
+        <div class="lg-row"><span class="sw" style="background:var(--prive)"></span>Private</div>
+        <div class="lg-sec">Other elements</div>
+        <div class="lg-row"><span class="dm"></span>Data center</div>
+        <div class="lg-row"><span class="dash"></span>Coverage area</div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+/* DATA: types = citoy, rech, prive, public, media, commu, dc */
+const TYPES = {
+  citoy:  {label:"Citizen initiative", color:"#1D9E75"},
+  commu:  {label:"Community initiative", color:"#BA7517"},
+  media:  {label:"Media initiative", color:"#D4537E"},
+  rech:   {label:"Research initiative", color:"#7F77DD"},
+  public: {label:"Public initiative", color:"#378ADD"},
+  prive:  {label:"Private initiative", color:"#D85A30"},
+  dc:     {label:"Data center", color:"#2C2C2A"}
+};
+/* cover: [lng, lat, radius km] for an approximate halo, or "loudoun" for the dedicated outline */
+const DATA = [
+  {id:"hubblo", type:"commu", name:"DC Watch, Hubblo", zone:"France", lic:"Open (ODbL)",
+   ctx:"Community inventory of French data centers, built from public sources by the company Hubblo. Aims to bring together the full range of open sources into a single map via a standardized contribution schema.",
+   url:"https://datacenters.hubblo.org/", coords:[2.35,48.86], cover:"france", zoom:5},
+  {id:"nuage", type:"citoy", name:"Le nuage était sous nos pieds", zone:"France (founded in Marseille)", lic:"Open (ODbL)",
+   ctx:"Collective formed in Marseille in 2023 amid contested expansion of the city's <a class=\"ml t-dc\" data-id=\"mrs\">port-area campuses</a>. Its map tracks existing data centers, announced projects, and the mobilizations opposing them, highlighting the conflictual dimension of these developments.",
+   url:"https://lenuageetaitsousnospieds.org/articles/2025-12-11-carte-des-data-centers-des-projets-et-des-contestations-en-france.html", coords:[5.37,43.30], cover:"france", zoom:6},
+  {id:"pec", type:"citoy", name:"Piedmont Environmental Council", zone:"Loudoun County, Virginia", lic:"Public (no license)",
+   ctx:"Long-established environmental organization in Virginia. In 2023, it produced the map of existing and proposed data centers in <a class=\"ml t-dc\" data-id=\"ashburn\">Loudoun County</a>, the world's highest concentration.",
+   url:"https://www.pecva.org/region/loudoun/existing-and-proposed-data-centers-a-web-map/", coords:[-77.56,39.09], cover:"loudoun", zoom:9},
+  {id:"coalition", type:"citoy", name:"Coalition for Responsible Data Center Development", zone:"United States", lic:"Open",
+   ctx:"Local organization opposing a data center in Farmington, MN, that grew into a national coalition. It maintains a map tracking citizen organizations (mostly Facebook groups) for or against data center projects.",
+   url:"https://www.datacenterresponsibility.com/mapofcommunityorganizations", coords:[-93.14,44.64], cover:"us", zoom:3.4},
+  {id:"ontario", type:"citoy", name:"Ontario Data Centre Tracker", zone:"Ontario, Canada", lic:"Public (no license)",
+   ctx:"Tracker of Ontario's data centers created in June 2026 and maintained by a single resident. Its informal methodology calls for caution, but the initiative itself testifies to a gap in public information in the province.",
+   url:"https://ontariodatacentres.ca/", coords:[-79.38,43.65], cover:"ontario", zoom:5},
+  {id:"nrs", type:"citoy", name:"À la recherche des centres de données québécois, Collectif NRS", zone:"Quebec", lic:"Forthcoming",
+   ctx:"Research project by the Numérique Responsable et Soutenable collective, whose map is announced for sometime in 2026. It would be the first citizen mapping of Quebec's data center fleet, in a province where information has so far been limited to commercial directories and aggregated Hydro-Québec data.",
+   url:"https://www.numerique-responsable.ca/initiative/a-la-recherche-des-centres-de-donnees-quebecois-projet-de-recherche/", coords:[-73.57,45.50], cover:"quebec", zoom:5},
+  {id:"epoch", type:"rech", name:"Frontier Data Centers Hub, Epoch AI", zone:"World (AI data centers)", lic:"Open (CC BY 4.0)",
+   ctx:"Map of the world's largest AI data centers, launched in November 2025 by the research institute Epoch AI. Its methodology combines high-resolution satellite imagery, building permits, and public records to estimate site capacity and timelines, and the entire dataset is published in downloadable form.",
+   url:"https://epoch.ai/data/data-centers", coords:[-122.42,37.77], cover:null, zoom:2},
+  {id:"nrel", type:"public", name:"Infrastructure map, NREL", zone:"United States", lic:"Public (data not provided)",
+   ctx:"Map published in late 2025 by the US federal renewable energy laboratory, listing more than 4,000 data centers related to electricity transmission lines and fiber-optic backbones. It reflects the concern of energy planners about the sector's growing demand.",
+   url:"https://research-hub.nrel.gov/en/publications/data-center-infrastructure-in-the-united-states-november-2025-2/", coords:[-105.22,39.74], cover:"us", zoom:3.4},
+  {id:"york", type:"rech", name:"Data Centred, York University", zone:"Canada", lic:"Public study, proprietary data from <a class=\"ml t-prive\" data-id=\"aterio\">Aterio</a>",
+   ctx:"First academic overview of the Canadian fleet, published in 2026 by researchers at York University. By tracking each project from announcement to commissioning, the study establishes that announced or under-construction capacity represents nearly fourteen times that of the operating fleet.",
+   url:"https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099", coords:[-79.50,43.77], cover:"canada", zoom:3.2},
+  {id:"arcep", type:"public", name:"“Pour un numérique soutenable” survey, Arcep", zone:"France", lic:"Public report, private data",
+   ctx:"France's telecommunications regulator collects environmental data directly from data center operators every year, under the binding force of law. This scheme remains one of the few worldwide where a public authority compels the sector to report environmental information.",
+   url:"https://www.arcep.fr/cartes-et-donnees/nos-publications-chiffrees/impact-environnemental/derniers-chiffres.html#c41418:~:text=La%20puissance%20de%20calcul%20des%20centres%20de%20donn%C3%A9es%20se%20concentre%20en%20Ile%2Dde%2DFrance", coords:[2.32,48.87], cover:"france", zoom:5},
+  {id:"idf", type:"public", name:"Data center observatory, Institut Paris Region", zone:"Île-de-France, France", lic:"Public (no license)",
+   ctx:"Regional observatory maintained by the Institut Paris Region, which publicly and exhaustively documents existing and planned data centers in Île-de-France, including their location, capacity, and status. It is a rare example of complete institutional mapping at the scale of a region.",
+   url:"https://www.institutparisregion.fr/amenagement-et-territoires/observatoire-des-data-centers-en-ile-de-france/", coords:[2.55,48.75], cover:null, zoom:8},
+  {id:"next", type:"media", name:"World map of data centers, Next", zone:"World", lic:"Based on OpenStreetMap (ODbL)",
+   ctx:"Journalistic map from the French outlet Next, which cross-references data centers listed in <a class=\"ml t-commu\" data-id=\"osm\">OpenStreetMap</a> with indicators of water stress, carbon intensity, and historical satellite imagery. It illustrates the potential of open-data aggregation, as well as the importance of crediting the upstream community work.",
+   url:"https://next.ink/carte-mondiale-des-datacenters-et-des-ressources-associees", coords:[2.38,48.85], cover:null, zoom:2},
+  {id:"osm", type:"commu", name:"telecom=data_center tag, OpenStreetMap", zone:"World", lic:"Open (ODbL)",
+   ctx:"Volunteer contributors document data centers one by one in the global OpenStreetMap database, using the <a href=\"https://wiki.openstreetmap.org/wiki/Tag:telecom%3Ddata_center\" target=\"_blank\" rel=\"noopener\">telecom=data_center</a> tag. This open, freely correctable data layer underpins several other maps, including that of the outlet <a class=\"ml t-media\" data-id=\"next\">Next</a>.",
+   url:"https://taginfo.geofabrik.de/europe:france/tags/telecom=data_center#map", coords:[-0.12,51.51], cover:null, zoom:2},
+  {id:"dcmap", type:"prive", name:"Data Center Map", zone:"World", lic:"Proprietary",
+   ctx:"The sector's oldest directory, launched in 2007 to make up for the market's lack of transparency. Fed by operators' voluntary submissions, it is an important source for the industry and also makes its data available to academic projects.",
+   url:"https://www.datacentermap.com/", coords:[12.57,55.68], cover:null, zoom:3},
+  {id:"aterio", type:"prive", name:"Aterio", zone:"United States and Canada", lic:"Proprietary",
+   ctx:"Market-intelligence company whose datasets, including projects under construction, are sold to investors and equipment makers. Its data also underpins academic work, including <a class=\"ml t-rech\" data-id=\"york\">York University</a>'s first pan-Canadian mapping.",
+   url:"https://www.aterio.io/datasets/lst_ca_data_centers", coords:[-123.12,49.28], cover:"uscan", zoom:3},
+  {id:"baxtel", type:"prive", name:"Baxtel", zone:"World", lic:"Proprietary",
+   ctx:"Global commercial directory offering detailed technical profiles by site, aimed at buyers of colocation services. It occupies a niche comparable to that of <a class=\"ml t-prive\" data-id=\"dcmap\">Data Center Map</a>, as well as <a class=\"ml t-prive\" data-id=\"aterio\">Aterio</a>.",
+   url:"https://baxtel.com/map", coords:[-97.7,30.27], cover:null, zoom:3},
+  {id:"dcwatch10a", type:"prive", name:"Data Center Watch, 10a Labs", zone:"United States", lic:"Proprietary",
+   ctx:"Project by the company 10a Labs that maps not data centers themselves but the local opposition they generate, drawing on local press, municipal meetings, and social media. Its reports counted around 75 projects blocked or delayed in the first quarter of 2026, representing some $130 billion.",
+   url:"https://www.datacenterwatch.org/", coords:[-77.03,38.90], cover:"us", zoom:3.4},
+  {id:"colossus", type:"dc", name:"Colossus (xAI)", zone:"Memphis, Tennessee", lic:null,
+   ctx:"AI data center built in a matter of months by xAI, housing more than half a million graphics processors by early 2026. Its power supply from gas turbines, installed before all permits were obtained, has drawn local opposition over air quality and noise.",
+   url:"https://en.wikipedia.org/wiki/Colossus_(data_center)", coords:[-90.13,35.06], cover:null, zoom:10},
+  {id:"stargate", type:"dc", name:"Stargate Abilene (OpenAI, Oracle, Crusoe)", zone:"Abilene, Texas", lic:null,
+   ctx:"Flagship campus of the Stargate program, targeting a capacity of 1.2 gigawatts, comparable to that of a nuclear reactor.",
+   url:"https://www.crusoe.ai/resources/blog/an-inside-look-at-the-abilene-ai-data-center", coords:[-99.73,32.45], cover:null, zoom:10},
+  {id:"ashburn", type:"dc", name:"Data Center Alley", zone:"Ashburn, Loudoun County, Virginia", lic:null,
+   ctx:"Area with the world's highest concentration of data centers, earning it the nickname “Data Center Alley.” It is the terrain covered by the <a class=\"ml t-citoy\" data-id=\"pec\">Piedmont Environmental Council</a>'s citizen map, which documents existing facilities and projects submitted to county authorities there.",
+   url:"https://www.pecva.org/region/loudoun/existing-and-proposed-data-centers-a-web-map/", coords:[-77.49,39.04], cover:"loudoun", zoom:10},
+  {id:"mrs", type:"dc", name:"MRS Campus (Digital Realty)", zone:"Marseille, France", lic:null,
+   ctx:"Cluster of data centers operated by Digital Realty in the port of Marseille, immediately adjacent to submarine cables. Their expansion in a dense urban area has drawn opposition and contributed to the formation of the <a class=\"ml t-citoy\" data-id=\"nuage\">Le nuage était sous nos pieds</a> collective.",
+   url:"https://www.digitalrealty.com/fr/data-centers/emea/marseille", coords:[5.35,43.33], cover:null, zoom:11}
+];
+/* Navigation order for the popups (‹ › arrows), west to east geographically (descending longitude). */
+const NAV_ORDER = DATA.slice().sort((a, b) => b.coords[0] - a.coords[0]).map(d => d.id);
+/* Approximate outlines of the covered zones */
+const ZONES = {
+  loudoun:[[-77.96,39.32],[-77.74,39.32],[-77.52,39.20],[-77.33,39.06],[-77.38,38.96],[-77.53,38.85],[-77.66,38.94],[-77.86,39.10],[-77.96,39.23],[-77.96,39.32]],
+  us:[[-124.7,48.4],[-124.2,42.0],[-120.6,34.6],[-117.1,32.5],[-111.0,31.3],[-106.5,31.8],[-103.9,29.3],[-101.4,29.8],[-99.2,26.4],[-97.1,25.9],[-93.8,29.7],[-89.6,29.2],[-85.4,29.7],[-83.0,29.0],[-81.5,25.1],[-80.0,26.8],[-81.0,31.9],[-75.5,35.2],[-73.9,40.5],[-69.9,41.7],[-66.9,44.8],[-69.2,47.5],[-71.5,45.0],[-75.0,44.8],[-79.0,43.3],[-82.4,41.7],[-83.5,45.8],[-88.4,48.3],[-95.2,49.0],[-123.3,49.0],[-124.7,48.4]],
+  canada:[[-141.0,69.5],[-128.0,70.5],[-115.0,73.0],[-100.0,73.5],[-85.0,70.0],[-68.0,63.0],[-64.0,60.5],[-55.0,53.0],[-52.6,47.3],[-56.0,46.0],[-60.0,43.4],[-66.0,43.5],[-67.8,45.7],[-71.5,45.0],[-75.0,44.8],[-79.0,43.3],[-82.4,41.7],[-83.5,45.8],[-88.4,48.3],[-95.2,49.0],[-123.3,49.0],[-125.5,50.5],[-131.0,54.5],[-135.0,58.5],[-141.0,60.0],[-141.0,69.5]],
+  france:[[-4.8,48.5],[-1.9,49.7],[0.2,49.7],[1.6,51.0],[2.6,51.1],[4.2,50.0],[6.7,49.2],[8.2,49.0],[7.6,47.5],[6.8,45.8],[7.7,44.0],[7.5,43.7],[6.5,43.1],[4.8,43.3],[3.0,42.4],[-1.8,43.4],[-1.2,45.6],[-2.5,47.3],[-4.8,48.0],[-4.8,48.5]],
+  quebec:[[-79.5,47.4],[-79.5,51.5],[-78.0,55.0],[-76.5,58.2],[-73.0,62.2],[-69.5,61.0],[-64.5,60.3],[-65.5,57.5],[-63.5,55.5],[-57.1,52.0],[-58.5,51.3],[-64.0,49.3],[-66.5,48.0],[-64.8,47.9],[-67.0,45.7],[-69.2,47.5],[-71.5,45.0],[-74.6,45.0],[-77.0,45.5],[-79.5,47.4]],
+  ontario:[[-95.2,49.0],[-95.2,52.8],[-93.0,55.5],[-88.0,56.5],[-85.0,55.3],[-82.2,55.2],[-82.5,52.2],[-79.5,51.5],[-79.5,47.4],[-77.0,45.5],[-74.6,45.0],[-75.0,44.8],[-79.0,43.3],[-82.4,41.7],[-83.5,45.8],[-84.6,46.5],[-88.4,48.3],[-95.2,49.0]]
+};
+function coverGeom(d){
+  if (!d.cover) return null;
+  const rings = d.cover === "uscan" ? [ZONES.us, ZONES.canada] : [ZONES[d.cover]];
+  return {type:"Feature", geometry:{type:"MultiPolygon", coordinates:rings.map(r => [r])}};
+}
+
+/* MAP: Positron basemap (CARTO, free), centered on Ontario, zoomed out to the maximum at startup. */
+const map = new maplibregl.Map({
+  container:"map",
+  style:"https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+  center:[-85, 50], zoom:2, attributionControl:{compact:true}
+});
+map.addControl(new maplibregl.NavigationControl({showCompass:false}), "top-left");
+
+/* SECTIONS_OF[id]: list of sections (h2) where "id" is mentioned in the text, in order of
+   appearance; filled in below, once the article is in the DOM. A map point can be cited in
+   several sections: each one gets its own "§n" reference in the point's card. */
+const SECTIONS_OF = {};
+let popup = null;
+function fiche(d){
+  const t = TYPES[d.type];
+  const secs = SECTIONS_OF[d.id] || [];
+  const badges = secs.map(s =>
+    `<span class="pp-sec" data-id="${d.id}" data-sec="${s}" title="Go to the mention in the text">§${s.replace("s", "")}</span>`
+  ).join("");
+  return `<div class="pp">
+    <h3>${d.name}</h3>
+    <div class="pp-top">
+      <span class="badge" style="background:${t.color}">${t.label}</span>
+      <span class="pp-secs">${badges}</span>
+    </div>
+    <p class="meta">Area: ${d.zone}${d.lic ? " · License: " + d.lic : ""}</p>
+    <p class="ctx">${d.ctx}</p>
+    <div class="pp-foot">
+      <a href="${d.url}" target="_blank" rel="noopener">View source ↗</a>
+      <span class="pp-nav">
+        <button class="pp-nav-btn" data-dir="1" data-id="${d.id}" title="Previous point" aria-label="Previous point">‹</button>
+        <button class="pp-nav-btn" data-dir="-1" data-id="${d.id}" title="Next point" aria-label="Next point">›</button>
+      </span>
+    </div>
+  </div>`;
+}
+function focus(id){
+  const d = DATA.find(x => x.id === id);
+  if (!d) return;
+  const g = coverGeom(d);
+  map.getSource("cover").setData(g || {type:"FeatureCollection", features:[]});
+  if (g){
+    const pts = g.geometry.coordinates.flat(2);
+    const xs = pts.map(c=>c[0]), ys = pts.map(c=>c[1]);
+    map.fitBounds([[Math.min(...xs),Math.min(...ys)],[Math.max(...xs),Math.max(...ys)]], {padding:70, duration:1600});
+  } else {
+    map.flyTo({center:d.coords, zoom:d.zoom, duration:1800});
+  }
+  if (popup) popup.remove();
+  popup = new maplibregl.Popup({offset:14}).setLngLat(d.coords).setHTML(fiche(d)).addTo(map);
+}
+
+map.on("load", () => {
+  map.addSource("cover", {type:"geojson", data:{type:"FeatureCollection", features:[]}});
+  map.addLayer({id:"cover-line", type:"line", source:"cover",
+    paint:{"line-color":"#5F5E5A", "line-width":1.6, "line-dasharray":[2.5,2.5]}});
+  map.addLayer({id:"cover-fill", type:"fill", source:"cover",
+    paint:{"fill-color":"#5F5E5A", "fill-opacity":0.05}});
+  const cv = document.createElement("canvas");
+  cv.width = cv.height = 36;
+  const g = cv.getContext("2d");
+  g.translate(18, 18); g.rotate(Math.PI/4);
+  g.fillStyle = "#ffffff"; g.fillRect(-12, -12, 24, 24);
+  g.fillStyle = "#2C2C2A"; g.fillRect(-9, -9, 18, 18);
+  map.addImage("dc-diamond", g.getImageData(0, 0, 36, 36));
+
+  const feats = DATA.map(d => ({
+    type:"Feature",
+    properties:{id:d.id, type:d.type, color:TYPES[d.type].color},
+    geometry:{type:"Point", coordinates:d.coords}
+  }));
+  map.addSource("inits", {
+    type:"geojson",
+    data:{type:"FeatureCollection", features:feats},
+    cluster:true, clusterRadius:42, clusterMaxZoom:9
+  });
+  map.addLayer({id:"clusters", type:"circle", source:"inits",
+    filter:["has","point_count"],
+    paint:{"circle-color":"#5F5E5A", "circle-opacity":0.92,
+           "circle-radius":["step",["get","point_count"],12,4,15,8,19],
+           "circle-stroke-width":2, "circle-stroke-color":"#ffffff"}});
+  map.addLayer({id:"cluster-count", type:"symbol", source:"inits",
+    filter:["has","point_count"],
+    layout:{"text-field":["get","point_count_abbreviated"],
+            "text-font":["Montserrat Medium"], "text-size":12, "text-allow-overlap":true},
+    paint:{"text-color":"#ffffff"}});
+  map.addLayer({id:"init-pts", type:"circle", source:"inits",
+    filter:["all",["!",["has","point_count"]],["!=",["get","type"],"dc"]],
+    paint:{"circle-color":["get","color"], "circle-radius":8,
+           "circle-stroke-width":2, "circle-stroke-color":"#ffffff"}});
+  map.addLayer({id:"dc-pts", type:"symbol", source:"inits",
+    filter:["all",["!",["has","point_count"]],["==",["get","type"],"dc"]],
+    layout:{"icon-image":"dc-diamond", "icon-size":0.65, "icon-allow-overlap":true}});
+
+  map.on("click", "clusters", async e => {
+    const f = map.queryRenderedFeatures(e.point, {layers:["clusters"]})[0];
+    const z = await map.getSource("inits").getClusterExpansionZoom(f.properties.cluster_id);
+    map.easeTo({center:f.geometry.coordinates, zoom:z + 0.5, duration:600});
+  });
+  const pick = e => focus(e.features[0].properties.id);
+  map.on("click", "init-pts", pick);
+  map.on("click", "dc-pts", pick);
+  ["clusters","init-pts","dc-pts"].forEach(l => {
+    map.on("mouseenter", l, () => map.getCanvas().style.cursor = "pointer");
+    map.on("mouseleave", l, () => map.getCanvas().style.cursor = "");
+  });
+});
+
+/* Panel buttons: swap tooltip/label between "expand" and "collapse" depending on state */
+function updatePanelButtons(){
+  const textBtn = document.getElementById("btn-text");
+  const mapBtn = document.getElementById("btn-map");
+  const textLabel = document.body.classList.contains("text-max") ? "Collapse text panel" : "Expand text panel";
+  const mapLabel = document.body.classList.contains("map-max") ? "Collapse map" : "Expand map";
+  textBtn.title = textLabel; textBtn.setAttribute("aria-label", textLabel);
+  mapBtn.title = mapLabel; mapBtn.setAttribute("aria-label", mapLabel);
+}
+document.getElementById("btn-text").addEventListener("click", () => {
+  document.body.classList.toggle("text-max");
+  document.body.classList.remove("map-max");
+  setTimeout(() => map.resize(), 60);
+  updatePanelButtons();
+});
+document.getElementById("btn-map").addEventListener("click", () => {
+  document.body.classList.toggle("map-max");
+  document.body.classList.remove("text-max");
+  setTimeout(() => map.resize(), 60);
+  updatePanelButtons();
+});
+
+/* Position of the text panel's fullscreen button (fixed, right edge of the panel) */
+const textPanel = document.getElementById("text-panel");
+function placeTextBtn(){
+  const r = textPanel.getBoundingClientRect();
+  document.getElementById("btn-text").style.left = (r.right - 46) + "px";
+}
+placeTextBtn();
+window.addEventListener("resize", placeTextBtn);
+new ResizeObserver(placeTextBtn).observe(textPanel);
+
+/* Collapsible legend */
+const legend = document.getElementById("legend");
+document.getElementById("lg-head").addEventListener("click", () => {
+  legend.classList.toggle("collapsed");
+  const btn = document.getElementById("lg-btn");
+  btn.textContent = legend.classList.contains("collapsed") ? "+" : "−";
+  btn.setAttribute("aria-label", legend.classList.contains("collapsed") ? "Expand legend" : "Collapse legend");
+});
+
+/* "§n" references in the map cards: for each data-id, stores every section (h2)
+   where it is mentioned in the text, along with the first link of each (for scrolling). */
+const MENTION_OF = {}; // key "id|sec" -> corresponding <a class="ml"> element
+(() => {
+  let current = null;
+  document.querySelectorAll("article h2, article a.ml[data-id]").forEach(el => {
+    if (el.tagName === "H2") { current = el.id; return; }
+    if (el.closest(".refs")) return; // links in the bibliography don't count as a "mention in the text"
+    const id = el.dataset.id;
+    if (!current) return;
+    if (!SECTIONS_OF[id]) SECTIONS_OF[id] = [];
+    if (!SECTIONS_OF[id].includes(current)){
+      SECTIONS_OF[id].push(current);
+      MENTION_OF[id + "|" + current] = el;
+    }
+  });
+})();
+document.addEventListener("click", e => {
+  const ml = e.target.closest("a.ml");
+  if (ml){
+    e.preventDefault();
+    document.body.classList.remove("text-max");
+    focus(ml.dataset.id);
+    setTimeout(() => map.resize(), 60);
+    return;
+  }
+  const nav = e.target.closest(".pp-nav-btn");
+  if (nav){
+    const idx = NAV_ORDER.indexOf(nav.dataset.id);
+    if (idx === -1) return;
+    const dir = parseInt(nav.dataset.dir, 10);
+    focus(NAV_ORDER[(idx + dir + NAV_ORDER.length) % NAV_ORDER.length]);
+    return;
+  }
+  const btn = e.target.closest(".pp-sec");
+  if (!btn) return;
+  const target = MENTION_OF[btn.dataset.id + "|" + btn.dataset.sec];
+  if (!target) return;
+  document.body.classList.remove("map-max");
+  setTimeout(() => map.resize(), 60);
+  target.scrollIntoView({behavior:"smooth", block:"center"});
+  target.classList.remove("flash");
+  requestAnimationFrame(() => target.classList.add("flash"));
+  setTimeout(() => target.classList.remove("flash"), 1700);
+});
+
+/* Auto-collapsing table of contents + section tracking */
+const sections = Array.from(document.querySelectorAll("article h2"));
+const rail = document.getElementById("toc-rail");
+const list = document.getElementById("toc-list");
+sections.forEach(h => {
+  const bar = document.createElement("span");
+  bar.dataset.id = h.id;
+  rail.appendChild(bar);
+  const a = document.createElement("a");
+  a.href = "#" + h.id;
+  a.textContent = h.textContent;
+  a.dataset.id = h.id;
+  a.addEventListener("click", e => {
+    e.preventDefault();
+    h.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+  list.appendChild(a);
+});
+function spy(){
+  const top = textPanel.scrollTop + 120;
+  let cur = sections[0].id;
+  sections.forEach(h => { if (h.offsetTop <= top) cur = h.id; });
+  rail.querySelectorAll("span").forEach(s => s.classList.toggle("on", s.dataset.id === cur));
+  list.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.dataset.id === cur));
+}
+textPanel.addEventListener("scroll", spy);
+spy();
+</script>
+</body>
+</html>

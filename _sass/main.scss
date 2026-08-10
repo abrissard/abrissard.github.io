@@ -1,0 +1,11 @@
+$accent-color: #da4e6c;
+
+html:root {
+  --bulma-link-h: #{hue($accent-color)};
+  --bulma-link-s: #{saturation($accent-color)};
+  --bulma-link-l: #{lightness($accent-color)};
+}
+
+body .footer {
+  padding: 3rem 1.5rem;
+}
