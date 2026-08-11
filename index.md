@@ -10,6 +10,6 @@ As an engineer and researcher, I'm concerned about the impact of technologies on
 
 I work to raise environmental awareness both internally at Mila, through its Sustainability Committee, and externally with grassroots climate activism groups in Montréal.
 
-Outside of research, I like graphic design, bouldering, biking around and play some hockey in Montréal parks. 🚲
+Outside of research, I like graphic design, bouldering, biking around and play some hockey in Montréal parks.
 
 Feel free to send me a message at *alexis.brissard 🎴 mila.quebec*.
