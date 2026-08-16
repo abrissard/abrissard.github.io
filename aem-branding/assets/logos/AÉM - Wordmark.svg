@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 2000 1500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="AÉM-Association" serif:id="AÉM Association" transform="matrix(0.844363,0,0,0.844363,-1141.724029,-150.131988)">
+        <g id="AÉM" transform="matrix(1,0,0,1,0,-62.921551)">
+            <g transform="matrix(98.144075,0,0,98.144075,-192478.585995,-50152.669199)">
+                <g transform="matrix(12,0,0,12,1998.343041,526.108327)">
+                </g>
+                <text x="1975.714px" y="526.108px" style="font-family:'Bauhaus93', 'Bauhaus 93', fantasy;font-size:12px;fill:rgb(46,125,118);stroke:rgb(46,125,118);stroke-width:0.01px;">AEM</text>
+            </g>
+            <path id="Accent" d="M2548.714,474.81C2595.811,450.348 2708.345,448.547 2707.928,474.81C2707.511,501.074 2596.676,606.179 2546.211,632.39C2504.48,654.065 2404.722,658.341 2405.139,632.077C2405.556,605.814 2498.249,501.022 2548.714,474.81Z" style="fill:rgb(46,125,118);stroke:rgb(46,125,118);stroke-width:1px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+        </g>
+        <g id="Association">
+            <g id="Accent1" serif:id="Accent" transform="matrix(0.137424,0,0,0.137424,2038.167907,1399.870653)">
+                <path d="M2548.714,474.81C2595.811,450.348 2708.345,448.547 2707.928,474.81C2707.511,501.074 2596.676,606.179 2546.211,632.39C2504.48,654.065 2404.722,658.341 2405.139,632.077C2405.556,605.814 2498.249,501.022 2548.714,474.81Z" style="fill:rgb(46,125,118);stroke:rgb(46,125,118);stroke-width:1px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+            </g>
+            <g transform="matrix(13.392137,0,0,13.392137,-28088.31852,-17557.731441)">
+                <g transform="matrix(12,0,0,12,2365.651831,1430.669165)">
+                </g>
+                <text x="2207.9px" y="1430.669px" style="font-family:'Bauhaus93', 'Bauhaus 93', fantasy;font-size:12px;fill:rgb(46,125,118);stroke:rgb(46,125,118);stroke-width:0.09px;">Association Etudiante de Mila</text>
+            </g>
+        </g>
+    </g>
+</svg>

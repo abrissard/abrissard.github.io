@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 2000 2000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="Guy-Side" serif:id="Guy Side" transform="matrix(3.647252,0,0,3.647252,-8387.669468,-1106.664064)">
+        <path d="M2530.095,762.833C2536.447,720.328 2567.464,550.433 2521.785,518.871C2473.292,485.365 2349.743,377.014 2379.58,368.168C2412.655,358.362 2562.807,450.393 2618.374,476.012C2654.208,492.534 2726.712,507.503 2732.741,551.37C2746.919,654.547 2757.372,814.626 2715.208,819.501C2674.196,824.242 2661.097,769.864 2665.924,614.579" style="fill:none;stroke:rgb(46,125,118);stroke-width:34px;"/>
+        <g transform="matrix(0.964093,0,0,0.964093,94.320903,9.884571)">
+            <circle cx="2647.792" cy="413.397" r="75.735" style="fill:none;stroke:rgb(46,125,118);stroke-width:34px;"/>
+        </g>
+    </g>
+</svg>

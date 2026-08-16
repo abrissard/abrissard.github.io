@@ -1,0 +1,11 @@
+AEM — Colour Reference
+=======================
+
+Teal     #2E7D76   RGB 46, 125, 118
+Ink      #000000   RGB 0, 0, 0
+Paper    #FFFFFF   RGB 255, 255, 255
+
+Fonts
+-----
+Bauhaus 93 — display / headlines / logo artwork only (fonts/Bauhaus93-Regular.ttf)
+Alegreya   — body & UI (fonts/Alegreya/, or https://fonts.google.com/specimen/Alegreya)

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 4000 2000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="Top-group" serif:id="Top group" transform="matrix(2.493564,0,0,2.493564,-2984.601567,-192.200659)">
+        <g id="Guy-Side" serif:id="Guy Side">
+            <path d="M2530.095,762.833C2536.447,720.328 2567.464,550.433 2521.785,518.871C2473.292,485.365 2349.743,377.014 2379.58,368.168C2412.655,358.362 2562.807,450.393 2618.374,476.012C2654.208,492.534 2726.712,507.503 2732.741,551.37C2746.919,654.547 2757.372,814.626 2715.208,819.501C2674.196,824.242 2661.097,769.864 2665.924,614.579" style="fill:none;stroke:rgb(46,125,118);stroke-width:34px;"/>
+            <g transform="matrix(0.964093,0,0,0.964093,94.320903,9.884571)">
+                <circle cx="2647.792" cy="413.397" r="75.735" style="fill:none;stroke:rgb(46,125,118);stroke-width:34px;"/>
+            </g>
+        </g>
+        <g id="Guy-Side1" serif:id="Guy Side" transform="matrix(-1,0,0,1,3997.973613,0)">
+            <path d="M2530.095,762.833C2536.447,720.328 2567.464,550.433 2521.785,518.871C2473.292,485.365 2349.743,377.014 2379.58,368.168C2412.655,358.362 2562.807,450.393 2618.374,476.012C2654.208,492.534 2726.712,507.503 2732.741,551.37C2746.919,654.547 2757.372,814.626 2715.208,819.501C2674.196,824.242 2661.097,769.864 2665.924,614.579" style="fill:none;stroke:rgb(46,125,118);stroke-width:34px;"/>
+            <g transform="matrix(0.964093,0,0,0.964093,94.320903,9.884571)">
+                <circle cx="2647.792" cy="413.397" r="75.735" style="fill:none;stroke:rgb(46,125,118);stroke-width:34px;"/>
+            </g>
+        </g>
+        <g id="Top-guy" serif:id="Top guy">
+            <g transform="matrix(2.128846,0,0,1.766082,49.573654,-512.982731)">
+                <path d="M916.189,490.197C922.725,476.569 935.795,476.569 942.33,483.383C948.866,490.197 948.866,503.826 942.33,517.454C937.755,527.675 925.992,537.896 916.189,544.71C906.387,537.896 894.624,527.675 890.049,517.454C883.514,503.826 883.514,490.197 890.049,483.383C896.584,476.569 909.654,476.569 916.189,490.197Z" style="fill:rgb(46,125,118);stroke:rgb(46,125,118);stroke-width:0.21px;"/>
+            </g>
+            <g id="Top-guy-body" serif:id="Top guy body" transform="matrix(1,0,0,1,10.78572,0)">
+                <g>
+                    <path d="M1895.873,573.18C1895.873,573.18 1909.761,403.703 1890.754,386.979C1878.667,376.345 1604.789,385.894 1615.613,379.941C1577.476,344.344 1868.824,284.901 1988.013,282.682" style="fill:none;stroke:rgb(46,125,118);stroke-width:34px;"/>
+                </g>
+                <g transform="matrix(-1,0,0,1,3976.026191,0)">
+                    <path d="M1895.873,573.18C1895.873,573.18 1909.761,403.703 1890.754,386.979C1878.667,376.345 1604.789,385.894 1615.613,379.941C1577.476,344.344 1868.824,284.901 1988.013,282.682" style="fill:none;stroke:rgb(46,125,118);stroke-width:34px;"/>
+                </g>
+            </g>
+            <g transform="matrix(0.964093,0,0,0.964093,-553.918431,-189.099504)">
+                <circle cx="2647.792" cy="413.397" r="75.735" style="fill:none;stroke:rgb(46,125,118);stroke-width:34px;"/>
+            </g>
+        </g>
+    </g>
+</svg>
